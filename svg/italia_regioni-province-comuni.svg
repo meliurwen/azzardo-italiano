@@ -4,7 +4,7 @@
 <style>
 g#comuni, g#province, g#regioni, g#segni {
     fill:none;
-    stroke-width:1;
+    stroke-width:0.3;
     stroke-linecap:square;
     stroke-linejoin:bevel;
     stroke-miterlimit:3;
@@ -22,7 +22,7 @@ g#province {
 }
 
 g#regioni {
-    stroke-width:2;
+    stroke-width:0.6;
     stroke:#000000;
     fill-opacity:1;
 }

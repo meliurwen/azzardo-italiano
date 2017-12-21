@@ -3,7 +3,7 @@ from  lxml import etree
 import pandas as pd
 
 
-svg_img = etree.parse("italia_regioni-province-comuni.svg")
+svg_img = etree.parse("svg/italia_regioni-province-comuni.svg")
 database = {}
 
 with open("dataset/dati-azzardo.json") as f:
