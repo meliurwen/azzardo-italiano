@@ -59,11 +59,16 @@ function get_min_max(json_data, tema) {
     var keys = Object.keys(json_data);
     for (var i = 0; i < keys.length; i++) {
         var key = keys[i];
-        var value_tmp = parseFloat(json_data[key][tema]);
-        if (isNaN(value_tmp)){
-            nan_values_counter = nan_values_counter + 1;
+
+        if (tema == "rateo_raccolta_reddito_2016") {
+            var value_tmp = parseFloat(json_data[key]["RACCOLTA_TOT_PROCAPITE_2016"] / json_data[key]["REDDITO_PROCAPITE"]);
+        } else {
+            var value_tmp = parseFloat(json_data[key][tema]);
         }
-        else {
+
+        if (isNaN(value_tmp)) {
+            nan_values_counter = nan_values_counter + 1;
+        } else {
             if (first_time_flag) {
                 maximum = value_tmp;
                 minimum = value_tmp;
@@ -86,7 +91,7 @@ function get_min_max(json_data, tema) {
         'max': maximum,
         'num_elements': num_elements,
         'tot': total,
-        'mean': total/num_elements
+        'mean': total / num_elements
     };
 
 }
@@ -98,20 +103,23 @@ function calc_percent(value, minimum, maximum) {
 
 
 
-function set_mode(mode){
-    if (mode === 'raccolta_procapite'){
+function set_mode(mode) {
+    if (mode === 'raccolta_procapite') {
         build_svg("RACCOLTA_TOT_PROCAPITE_2016", false);
     } else if (mode === 'reddito_procapite') {
         build_svg("REDDITO_PROCAPITE", true);
+    } else if (mode === 'popolazione') {
+        build_svg("POPOLAZIONE_COMUNE_2016", false);
+    } else if (mode === 'rateo_raccolta_reddito_2016') {
+        build_svg("rateo_raccolta_reddito_2016", false);
     }
 
 }
 
 
-function build_svg(tema, higherIsBetter){
+function build_svg(tema, higherIsBetter) {
 
     var min_max_mean = get_min_max(data, tema);
-
     var minimum = min_max_mean["min"];
     var maximum = min_max_mean["max"];
     var mean = min_max_mean["mean"];
@@ -123,11 +131,15 @@ function build_svg(tema, higherIsBetter){
     for (var i = 0; i < keys.length; i++) {
         var key = keys[i];
         try {
-            if (higherIsBetter){
-                var percentage = (calc_percent(parseFloat(data[key][tema]), minimum, mean) / 100);
+            if (tema == "rateo_raccolta_reddito_2016") {
+                var theme_value = parseFloat(data[key]["RACCOLTA_TOT_PROCAPITE_2016"] / data[key]["REDDITO_PROCAPITE"]);
+            } else {
+                var theme_value = parseFloat(data[key][tema]);
             }
-            else {
-                var percentage = 1 - (calc_percent(parseFloat(data[key][tema]), minimum, mean) / 100);
+            if (higherIsBetter) {
+                var percentage = (calc_percent(theme_value, minimum, mean) / 100);
+            } else {
+                var percentage = 1 - (calc_percent(theme_value, minimum, mean) / 100);
             }
             // get the inner element by id
             svgDoc.getElementById("g_reg" + data[key]["CODICE_ISTAT_REGIONE"] + "-pro" + data[key]["CODICE_ISTAT_PROVINCIA"] + "-com" + data[key]["CODICE_ISTAT_COMUNE"]).style.fill = getColorForPercentage(percentage);
